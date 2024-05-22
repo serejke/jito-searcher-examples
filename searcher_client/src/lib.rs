@@ -1,7 +1,4 @@
-use std::{
-    sync::Arc,
-    time::{Duration, Instant},
-};
+use std::{future, sync::Arc, time::{Duration, Instant}};
 
 use futures_util::StreamExt;
 use log::{info, warn};
@@ -127,7 +124,9 @@ where
     let mut time_left = wait_seconds * 1000;
     while let Ok(Some(Ok(results))) = timeout(
         Duration::from_millis(time_left),
-        bundle_results_subscription.next(),
+        bundle_results_subscription
+            .filter(|bundle_result| future::ready(matches!(bundle_result, Ok(bundle) if bundle.bundle_id == uuid)))
+            .next(),
     )
     .await
     {
