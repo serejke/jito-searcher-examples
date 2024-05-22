@@ -107,6 +107,7 @@ where
 {
     let bundle_signatures: Vec<Signature> =
         transactions.iter().map(|tx| tx.signatures[0]).collect();
+    info!("Transactions in the bundle: {:?}", bundle_signatures);
 
     let result = send_bundle_no_wait(transactions, searcher_client).await?;
 
